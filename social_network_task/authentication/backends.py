@@ -30,20 +30,16 @@ class JWTAuthentication(authentication.BaseAuthentication):
         return self._authenticate_credentials(request, token)
 
     def _authenticate_credentials(self, request, token):
-        print(token)
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, ["HS256"])
         except Exception as e:
-            print(e)
             msg = 'Ошибка аутентификации. Невозможно декодировать токен'
             raise exceptions.AuthenticationFailed(msg)
-        print(2)
         try:
             user = User.objects.get(pk=payload['id'])
         except User.DoesNotExist:
             msg = 'Пользователь соответствующий данному токену не найден.'
             raise exceptions.AuthenticationFailed(msg)
-        print(3)
         if not user.is_active:
             msg = 'Данный пользователь деактивирован.'
             raise exceptions.AuthenticationFailed(msg)

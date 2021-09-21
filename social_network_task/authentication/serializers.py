@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from .models import User
+from .models import User, Post
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -65,9 +65,11 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'token',)
+        fields = ('email', 'username', 'password', 'token', 'posts')
         read_only_fields = ('token',)
 
     def update(self, instance, validated_data):
@@ -82,3 +84,10 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+class PostSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'body', 'owner']

@@ -6,6 +6,7 @@ class UserJSONRenderer(JSONRenderer):
     charset = 'utf-8'
 
     def render(self, data, media_type=None, renderer_context=None):
+        print(data)
         token = data.get('token', None)
 
         if token is not None and isinstance(token, bytes):
