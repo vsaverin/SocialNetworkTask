@@ -6,9 +6,9 @@ from rest_framework.views import APIView
 
 from .renderers import UserJSONRenderer
 from .serializers import (
-    LoginSerializer, RegistrationSerializer, UserSerializer, PostSerializer
+    LoginSerializer, RegistrationSerializer, UserSerializer, PostSerializer, LikesSerializer
 )
-from .models import Post
+from .models import Post, PostLikes
 
 
 class RegistrationAPIView(APIView):
@@ -72,3 +72,29 @@ class PostDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+class LikePost(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LikesSerializer
+    
+    def get_object(self, pk):
+        try:
+            return PostLikes.objects.get(pk=pk)
+        except PostLikes.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+
+    def post(self, request, pk):
+        data = {
+            "user":request.user.id,
+            "post":pk,
+        }
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        like = self.get_object(PostLikes.objects.get(user=request.user, post=Post.objects.get(id=pk)).id)
+        like.delete()
+        return Response(status=status.HTTP_200_OK)

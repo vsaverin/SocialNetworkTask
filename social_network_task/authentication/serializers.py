@@ -1,7 +1,8 @@
+from .models import PostLikes
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from .models import User, Post
+from .models import PostLikes, User, Post
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -91,3 +92,19 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'title', 'body', 'owner']
+
+class LikesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostLikes
+        fields = ['id', 'user', 'post']
+
+    def create(self, validated_data):
+        return PostLikes.objects.create(**validated_data)
+
+class UnlikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostLikes
+        fields = ['id', 'user', 'post']
+
+    def delete(self, validated_data):
+        return PostLikes.objects.get(**validated_data).delete()

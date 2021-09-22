@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime, timedelta
 from django.conf import settings 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db.models.deletion import CASCADE
 import jwt
 
 
@@ -82,3 +83,10 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['created']
+
+class PostLikes(models.Model):
+    user = models.ForeignKey('User', related_name='user', on_delete=models.CASCADE)
+    post = models.OneToOneField('Post', related_name='post', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"User {self.user.username} liked post {self.post.title}"
