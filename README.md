@@ -68,7 +68,7 @@ python manage.py runserver
     }
 }
 ```
-** Обратите внимание, что для выполнения всех следующих запросов заголовке необходимо передать токен, полученный при авторизации **
+**Обратите внимание, что для выполнения всех следующих запросов заголовке необходимо передать токен, полученный при авторизации**
 ```
 "Authorization": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NCwiZXhwIjoxNjYzNjk2MDc4fQ.9QFSPdYPbzX0LruE2kpvswqaEf2XrK0UhkmBr35gfh4"
 ```
